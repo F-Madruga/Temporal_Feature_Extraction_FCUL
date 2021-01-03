@@ -8,8 +8,12 @@ public class Main {
         long start = System.currentTimeMillis();
         // System.out.println(df.sum());
         System.out.println(df.filter((columns, row) -> {
-            return (Integer) row.get(columns.get("SELLER")) == 302;
-        }).mean());
+            return (Integer) row.get(columns.get("SELLER")) == 302 && (Integer) row.get(columns.get("YEAR")) == 2018 && (Integer) row.get(columns.get("MONTH")) == 10;
+        }).mean(new String[]  {"AMOUNT"}));
+        System.out.println(df.filter((columns, row) -> {
+            return (Integer) row.get(columns.get("BUYER")) == 18;
+        }).mean(new String[]  {"AMOUNT"}));
+        //System.out.println(df.);
         System.out.println("Time elapsed: " + (System.currentTimeMillis() - start));
 
     }

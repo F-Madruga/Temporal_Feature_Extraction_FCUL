@@ -189,7 +189,7 @@ public class DataFrame {
     }
 
     public DataFrame mean(String[] columns /*Lambda com WHERE*/) {
-        List<List<?>> sum = this.sum().getData();
+        List<List<?>> sum = this.sum(columns).getData();
         List<Double> mean = new ArrayList<>();
         for (Object cell : sum.get(0)) {
             mean.add((Double) cell / this.data.size());
