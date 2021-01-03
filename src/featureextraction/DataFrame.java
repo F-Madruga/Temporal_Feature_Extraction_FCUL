@@ -101,8 +101,8 @@ public class DataFrame {
     @Override
     public String toString() {
         return "DataFrame{" +
-                "data=" + data +
-                ", columnsNames=" + columnsNames +
+                "data=" + this.data +
+                ", columnsNames=" + this.columnsNames +
                 '}';
     }
 
@@ -114,6 +114,154 @@ public class DataFrame {
     public DataFrame getColumn(String[] columns) {
         // TODO: Retorna um DataFrame com os dados das colunas pedidas
         return null;
+    }
+
+    public DataFrame min() {
+        Set<String> keys = this.columnsNames.keySet();
+        return this.min(keys.toArray(new String[keys.size()]));
+    }
+
+    public DataFrame min(String[] columns) {
+        List<Object []> results = DoInParallelFrameWork.doInParallel((start, end) -> {
+            Object[] result = new Object[columns.length];
+            for (int i = start; i < end; i++) {
+                for (int j = 0; j < columns.length; j++) {
+                    int columnIndex = this.columnsNames.get(columns[j]);
+                    Object cell = data.get(i).get(columnIndex);
+                    if (result[j] == null) {
+                        result[j] = this.data.get(i).get(columnIndex);
+                    }
+                    else {
+                        if (cell instanceof Integer) {
+                            Integer cellValue = (Integer) cell;
+                            if (cellValue < (Integer) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else if (cell instanceof Double) {
+                            Double cellValue = (Double) cell;
+                            if (cellValue < (Double) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else if (cell instanceof Float) {
+                            Float cellValue = (Float) cell;
+                            if (cellValue < (Float) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else {
+                            // TODO: throw error -> not a number
+                        }
+                    }
+                }
+            }
+            return result;
+        }, this.data.size());
+        Object[] min = results.remove(0);
+        for (int i = 0; i < results.size(); i++) {
+            for (int j = 0; j < results.get(i).length; j++) {
+                Object cell = results.get(i)[j];
+                if (cell instanceof Integer) {
+                    Integer cellValue = (Integer) cell;
+                    if (cellValue < (Integer) min[j]) {
+                        min[j] = cellValue;
+                    }
+                }
+                else if (cell instanceof Double) {
+                    Double cellValue = (Double) cell;
+                    if (cellValue < (Double) min[j]) {
+                        min[j] = cellValue;
+                    }
+                }
+                else if (cell instanceof Float) {
+                    Float cellValue = (Float) cell;
+                    if (cellValue < (Float) min[j]) {
+                        min[j] = cellValue;
+                    }
+                }
+                else {
+                    // TODO: throw error -> not a number
+                }
+            }
+        }
+        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(min)));
+        df.setColumnsNames(columns);
+        return df;
+    }
+
+    public DataFrame max() {
+        Set<String> keys = this.columnsNames.keySet();
+        return this.max(keys.toArray(new String[keys.size()]));
+    }
+
+    public DataFrame max(String[] columns) {
+        List<Object []> results = DoInParallelFrameWork.doInParallel((start, end) -> {
+            Object[] result = new Object[columns.length];
+            for (int i = start; i < end; i++) {
+                for (int j = 0; j < columns.length; j++) {
+                    int columnIndex = this.columnsNames.get(columns[j]);
+                    Object cell = data.get(i).get(columnIndex);
+                    if (result[j] == null) {
+                        result[j] = this.data.get(i).get(columnIndex);
+                    }
+                    else {
+                        if (cell instanceof Integer) {
+                            Integer cellValue = (Integer) cell;
+                            if (cellValue > (Integer) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else if (cell instanceof Double) {
+                            Double cellValue = (Double) cell;
+                            if (cellValue > (Double) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else if (cell instanceof Float) {
+                            Float cellValue = (Float) cell;
+                            if (cellValue > (Float) result[j]) {
+                                result[j] = cellValue;
+                            }
+                        }
+                        else {
+                            // TODO: throw error -> not a number
+                        }
+                    }
+                }
+            }
+            return result;
+        }, this.data.size());
+        Object[] max = results.remove(0);
+        for (int i = 0; i < results.size(); i++) {
+            for (int j = 0; j < results.get(i).length; j++) {
+                Object cell = results.get(i)[j];
+                if (cell instanceof Integer) {
+                    Integer cellValue = (Integer) cell;
+                    if (cellValue > (Integer) max[j]) {
+                        max[j] = cellValue;
+                    }
+                }
+                else if (cell instanceof Double) {
+                    Double cellValue = (Double) cell;
+                    if (cellValue > (Double) max[j]) {
+                        max[j] = cellValue;
+                    }
+                }
+                else if (cell instanceof Float) {
+                    Float cellValue = (Float) cell;
+                    if (cellValue > (Float) max[j]) {
+                        max[j] = cellValue;
+                    }
+                }
+                else {
+                    // TODO: throw error -> not a number
+                }
+            }
+        }
+        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(max)));
+        df.setColumnsNames(columns);
+        return df;
     }
 
     public DataFrame filter(ColumnFilter filter) {

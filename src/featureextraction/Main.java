@@ -15,6 +15,5 @@ public class Main {
         }).mean(new String[]  {"AMOUNT"}));
         //System.out.println(df.);
         System.out.println("Time elapsed: " + (System.currentTimeMillis() - start));
-
     }
 }
