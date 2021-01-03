@@ -116,9 +116,23 @@ public class DataFrame {
         return null;
     }
 
-    public DataFrame filter(/*lambda*/) {
+    public DataFrame filter(ColumnFilter filter) {
         // TODO: filtra os dados (criar interface para filtrar, desta forma podemos usar lambdas)
-        return null;
+        List<List<List<?>>> results = DoInParallelFrameWork.doInParallel(((start, end) -> {
+            List<List<?>> result = new ArrayList<>();
+            for (int i = start; i < end; i++) {
+                if (filter.filterBy(this.columnsNames, this.data.get(i))) {
+                    result.add(this.data.get(i));
+                }
+            }
+            return result;
+        }), data.size());
+        int iteration = results.size();
+        for (int i = 1; i < iteration; i++) {
+            results.get(0).addAll(results.remove(1));
+        }
+        // DataFrame df = new DataFrame(results.get(0), this.columnsNames);
+        return new DataFrame(results.get(0), this.columnsNames);
     }
 
     public DataFrame sum() {
@@ -128,31 +142,43 @@ public class DataFrame {
 
     public DataFrame sum(String[] columns /*WHERE*/) {
         // TODO: Retornar a soma por colunas especificadas
-        int[] indexes = new int[columns.length];
-        for (int i = 0; i < columns.length; i++) {
-            indexes[i] = columnsNames.get(columns[i]);
-        }
-        List<int []> results = DoInParallelFrameWork.doInParallel(((start, end) -> {
-            int[] result = new int[indexes.length];
+        List<Double []> results = DoInParallelFrameWork.doInParallel(((start, end) -> {
+            Double[] result = new Double[columns.length];
             for (int i = start; i < end; i++) {
-                for (int j = 0; j < indexes.length; j++) {
-                    result[j] += (Integer) data.get(i).get(indexes[j]);
+                for (int j = 0; j < columns.length; j++) {
+                    if (result[j] == null) {
+                        result[j] = 0.0;
+                    }
+                    int columnIndex = this.columnsNames.get(columns[j]);
+                    Object cell = data.get(i).get(columnIndex);
+                    if (cell instanceof Integer) {
+                        result[j] += (Integer) data.get(i).get(columnIndex);
+                    }
+                    else if (cell instanceof Double) {
+                        result[j] += (Double) data.get(i).get(columnIndex);
+                    }
+                    else if (cell instanceof Float) {
+                        result[j] += (Integer) data.get(i).get(columnIndex);
+                    }
+                    else {
+                        // TODO: throw error -> not a number
+                    }
                 }
             }
             return result;
         }), data.size());
-        List<Integer> sum = new ArrayList<>();
-        for (int j = 0; j < indexes.length; j++) {
-            sum.add(0);
-        }
-        for (int i = 0; i < results.size(); i++) {
-            for (int j = 0; j < results.get(i).length; j++) {
-                sum.set(j, sum.get(j) + results.get(i)[j]);
+        Double [] sum = new Double[columns.length];
+        for (Double [] result : results) {
+            for (int i = 0; i < result.length; i++) {
+                if (sum[i] == null) {
+                    sum[i] = result[i];
+                }
+                else {
+                    sum[i] += result[i];
+                }
             }
         }
-        List<List<?>> total = new ArrayList<>();
-        total.add(sum);
-        DataFrame df = new DataFrame(total);
+        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(sum)));
         df.setColumnsNames(columns);
         return df;
     }
@@ -163,7 +189,13 @@ public class DataFrame {
     }
 
     public DataFrame mean(String[] columns /*Lambda com WHERE*/) {
-        // TODO: Retornar a média por colunas especificadas (utiliza o sum)
-        return null;
+        List<List<?>> sum = this.sum().getData();
+        List<Double> mean = new ArrayList<>();
+        for (Object cell : sum.get(0)) {
+            mean.add((Double) cell / this.data.size());
+        }
+        DataFrame df = new DataFrame(Arrays.asList(mean));
+        df.setColumnsNames(columns);
+        return df;
     }
 }
