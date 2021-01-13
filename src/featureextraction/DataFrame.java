@@ -13,7 +13,6 @@ public class DataFrame {
 
     private Map<String, Integer> columnsNames;
 
-
     public static DataFrame readCSV(String path, String separator, boolean columnNameExist) {
         // TODO: Read csv in parallel and create DataFrame Object
         List<List<?>> data = new ArrayList<>();
