@@ -112,7 +112,7 @@ public class Main {
 
         start = System.currentTimeMillis();
 
-        dataset = FeatureAggregator.doAggregated(dataset, new int[] {5, 6}, ((groupIndexes, currentIndividual, dataset1) -> {
+        dataset = FeatureAggregator.doAggregated(dataset, new int[] {6}, ((groupIndexes, currentIndividual, dataset1) -> {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);

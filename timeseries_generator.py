@@ -28,6 +28,6 @@ def row_as_str(r):
     return ",".join([ str(e) for e in r ]) + "\n"
 
 if __name__ == '__main__':
-    with open("dataset.csv", "w") as f:
+    with open("mini_dataset.csv", "w") as f:
         for i in range(number_of_lines):
             f.write(row_as_str(row(i)))
