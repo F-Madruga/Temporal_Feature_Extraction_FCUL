@@ -1,8 +1,6 @@
 package featureextraction;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +48,45 @@ public class Main {
 
         System.out.println("Total time elapsed: " + (System.currentTimeMillis() - totalStart)); */
 
+        /*List<Map<String, List<Integer>>> subsets = FeatureAggregator.doAggregated(dataset, new int[] {5, 6}, ((groupIndexes, currentIndividual, dataset1, phase) -> {
+            if (groupIndexes.size() >= 1) {
+                Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
+                List<Float> lastIndividual = dataset.get(lastIndex);
+                if (phase == 0) {
+                    currentIndividual.add(lastIndividual.get(lastIndividual.size() - 1) + currentIndividual.get(4));
+                }
+                else {
+                    currentIndividual.set(currentIndividual.size() - 1, lastIndividual.get(lastIndividual.size() - 1) + currentIndividual.get(currentIndividual.size() - 1));
+                }
+            }
+            else {
+                if (phase == 0) {
+                    currentIndividual.add(currentIndividual.get(4));
+                }
+            }
+            return currentIndividual;
+        }));*/
+
+
+
+
+        // System.out.println(subsets.get(1).get(group));
+        /*List<Integer> individuals = new ArrayList<>();
+        for (Map<String, List<Integer>> subset: subsets) {
+            if (subset.containsKey(group)) {
+                List<Integer> groupData = subset.get(group);
+                individuals.addAll(groupData);
+            }
+        }*/
+        /*
+        System.out.println("Group = " + group);
+        System.out.println("Size = " + subsets.get(1).get(group).size());
+        System.out.println("Individual indexes = " + subsets.get(1).get(group));
+         */
+
+        long totalStart = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+
         String path = "./dataset.csv";
         String separator = ",";
 
@@ -71,24 +108,9 @@ public class Main {
             e.printStackTrace();
         }
 
-        /*List<Map<String, List<Integer>>> subsets = FeatureAggregator.doAggregated(dataset, new int[] {5, 6}, ((groupIndexes, currentIndividual, dataset1, phase) -> {
-            if (groupIndexes.size() >= 1) {
-                Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
-                List<Float> lastIndividual = dataset.get(lastIndex);
-                if (phase == 0) {
-                    currentIndividual.add(lastIndividual.get(lastIndividual.size() - 1) + currentIndividual.get(4));
-                }
-                else {
-                    currentIndividual.set(currentIndividual.size() - 1, lastIndividual.get(lastIndividual.size() - 1) + currentIndividual.get(currentIndividual.size() - 1));
-                }
-            }
-            else {
-                if (phase == 0) {
-                    currentIndividual.add(currentIndividual.get(4));
-                }
-            }
-            return currentIndividual;
-        }));*/
+        System.out.println("Time elapsed reading: " + (System.currentTimeMillis() - start) + "\n");
+
+        start = System.currentTimeMillis();
 
         dataset = FeatureAggregator.doAggregated(dataset, new int[] {5, 6}, ((groupIndexes, currentIndividual, dataset1) -> {
             if (groupIndexes.size() >= 1) {
@@ -102,22 +124,45 @@ public class Main {
             return currentIndividual;
         }));
 
-        System.out.println(dataset.get(352150));
+        System.out.println("Time elapsed on task 1: " + (System.currentTimeMillis() - start) + "\n");
 
 
+        
 
-        // System.out.println(subsets.get(1).get(group));
-        /*List<Integer> individuals = new ArrayList<>();
-        for (Map<String, List<Integer>> subset: subsets) {
-            if (subset.containsKey(group)) {
-                List<Integer> groupData = subset.get(group);
-                individuals.addAll(groupData);
+
+        start = System.currentTimeMillis();
+
+        String outputPath = "dataset_out.csv";
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(outputPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (List<Float> record: dataset) {
+            String str = "";
+            for (int i = 0; i < record.size(); i++) {
+                str += record.get(i);
+                if (i != record.size() - 1) {
+                    str += ",";
+                }
             }
-        }*/
-        /*
-        System.out.println("Group = " + group);
-        System.out.println("Size = " + subsets.get(1).get(group).size());
-        System.out.println("Individual indexes = " + subsets.get(1).get(group));
-         */
+            try {
+                writer.write(str);
+                writer.write(System.getProperty( "line.separator" ));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        // writer.flush(); // close() should take care of this
+        try {
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        long end = System.currentTimeMillis();
+        System.out.println("Time elapsed writing: " + (System.currentTimeMillis() - start) + "\n");
+
+        System.out.println("Time elapsed: " + (System.currentTimeMillis() - totalStart));
     }
 }
