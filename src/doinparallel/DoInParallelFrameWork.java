@@ -18,6 +18,7 @@ public class DoInParallelFrameWork {
 
         for (int ti = 0; ti < nthreads; ti++) {
             final int tid = ti;
+            results.add(null);
             threads[tid] = new Thread( () -> {
 
                 int start_i = tid * nIterations / nthreads; // 0 * M / T   | 1 * M / T  | 2 * M / T  |  3 * M  /T
@@ -26,7 +27,7 @@ public class DoInParallelFrameWork {
                     end_i = nIterations;
                 }
 
-                results.add(pw.doIteration(start_i, end_i));
+                results.set(tid, pw.doIteration(start_i, end_i));
             });
             threads[tid].start();
         }
