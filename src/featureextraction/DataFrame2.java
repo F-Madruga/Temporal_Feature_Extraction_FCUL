@@ -7,13 +7,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-public class DataFrame {
+public class DataFrame2 {
 
     private List<List<?>> data;
 
     private Map<String, Integer> columnsNames;
 
-    public static DataFrame readCSV(String path, String separator, boolean columnNameExist) {
+    public static DataFrame2 readCSV(String path, String separator, boolean columnNameExist) {
         // TODO: Read csv in parallel and create DataFrame Object
         List<List<?>> data = new ArrayList<>();
         Map<String, Integer> columnsNames = new HashMap<>();
@@ -47,10 +47,10 @@ public class DataFrame {
             System.out.println("Error reading CSV file");
             e.printStackTrace();
         }
-        return new DataFrame(data, columnsNames);
+        return new DataFrame2(data, columnsNames);
     }
 
-    public DataFrame(List<List<?>> data) {
+    public DataFrame2(List<List<?>> data) {
         this.data = data;
         /* Map<String, Integer> columnsNames = new HashMap<>();
         for (int i = 0; i < this.data.size(); i++) {
@@ -58,12 +58,12 @@ public class DataFrame {
         } */
     }
 
-    public DataFrame(List<List<?>> data, Map<String, Integer> columnsNames) {
+    public DataFrame2(List<List<?>> data, Map<String, Integer> columnsNames) {
         this(data);
         this.columnsNames = columnsNames;
     }
 
-    public DataFrame(List<List<?>> data, String[] columns) {
+    public DataFrame2(List<List<?>> data, String[] columns) {
         this(data);
         this.columnsNames = new HashMap<>();
         for (int i = 0; i < columns.length; i++) {
@@ -105,22 +105,22 @@ public class DataFrame {
                 '}';
     }
 
-    public DataFrame slice(int start, int end) {
+    public DataFrame2 slice(int start, int end) {
         // TODO: Retorna as linhas desde o start (inclusive) até ao end (exclusive)
         return null;
     }
 
-    public DataFrame getColumn(String[] columns) {
+    public DataFrame2 getColumn(String[] columns) {
         // TODO: Retorna um DataFrame com os dados das colunas pedidas
         return null;
     }
 
-    public DataFrame min() {
+    public DataFrame2 min() {
         Set<String> keys = this.columnsNames.keySet();
         return this.min(keys.toArray(new String[keys.size()]));
     }
 
-    public DataFrame min(String[] columns) {
+    public DataFrame2 min(String[] columns) {
         List<Object []> results = DoInParallelFrameWork.doInParallel((start, end) -> {
             Object[] result = new Object[columns.length];
             for (int i = start; i < end; i++) {
@@ -184,17 +184,17 @@ public class DataFrame {
                 }
             }
         }
-        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(min)));
+        DataFrame2 df = new DataFrame2(Arrays.asList(Arrays.asList(min)));
         df.setColumnsNames(columns);
         return df;
     }
 
-    public DataFrame max() {
+    public DataFrame2 max() {
         Set<String> keys = this.columnsNames.keySet();
         return this.max(keys.toArray(new String[keys.size()]));
     }
 
-    public DataFrame max(String[] columns) {
+    public DataFrame2 max(String[] columns) {
         List<Object []> results = DoInParallelFrameWork.doInParallel((start, end) -> {
             Object[] result = new Object[columns.length];
             for (int i = start; i < end; i++) {
@@ -258,12 +258,12 @@ public class DataFrame {
                 }
             }
         }
-        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(max)));
+        DataFrame2 df = new DataFrame2(Arrays.asList(Arrays.asList(max)));
         df.setColumnsNames(columns);
         return df;
     }
 
-    public DataFrame filter(ColumnFilter filter) {
+    public DataFrame2 filter(ColumnFilter filter) {
         // TODO: filtra os dados (criar interface para filtrar, desta forma podemos usar lambdas)
         List<List<List<?>>> results = DoInParallelFrameWork.doInParallel(((start, end) -> {
             List<List<?>> result = new ArrayList<>();
@@ -279,15 +279,15 @@ public class DataFrame {
             results.get(0).addAll(results.remove(1));
         }
         // DataFrame df = new DataFrame(results.get(0), this.columnsNames);
-        return new DataFrame(results.get(0), this.columnsNames);
+        return new DataFrame2(results.get(0), this.columnsNames);
     }
 
-    public DataFrame sum() {
+    public DataFrame2 sum() {
         Set<String> keys = this.columnsNames.keySet();
         return this.sum(keys.toArray(new String[keys.size()]));
     }
 
-    public DataFrame sum(String[] columns /*WHERE*/) {
+    public DataFrame2 sum(String[] columns /*WHERE*/) {
         // TODO: Retornar a soma por colunas especificadas
         List<Double []> results = DoInParallelFrameWork.doInParallel(((start, end) -> {
             Double[] result = new Double[columns.length];
@@ -325,23 +325,23 @@ public class DataFrame {
                 }
             }
         }
-        DataFrame df = new DataFrame(Arrays.asList(Arrays.asList(sum)));
+        DataFrame2 df = new DataFrame2(Arrays.asList(Arrays.asList(sum)));
         df.setColumnsNames(columns);
         return df;
     }
 
-    public DataFrame mean() {
+    public DataFrame2 mean() {
         Set<String> keys = this.columnsNames.keySet();
         return this.mean(keys.toArray(new String[keys.size()]));
     }
 
-    public DataFrame mean(String[] columns /*Lambda com WHERE*/) {
+    public DataFrame2 mean(String[] columns /*Lambda com WHERE*/) {
         List<List<?>> sum = this.sum(columns).getData();
         List<Double> mean = new ArrayList<>();
         for (Object cell : sum.get(0)) {
             mean.add((Double) cell / this.data.size());
         }
-        DataFrame df = new DataFrame(Arrays.asList(mean));
+        DataFrame2 df = new DataFrame2(Arrays.asList(mean));
         df.setColumnsNames(columns);
         return df;
     }
