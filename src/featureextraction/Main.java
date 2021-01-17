@@ -87,7 +87,7 @@ public class Main {
         long totalStart = System.currentTimeMillis();
         long start = System.currentTimeMillis();
 
-        String path = "./dataset.csv";
+        String path = "./tiny_dataset.csv";
         String separator = ",";
 
         List<List<Float>> dataset = new ArrayList<>();
@@ -110,13 +110,15 @@ public class Main {
 
         System.out.println("Time elapsed reading: " + (System.currentTimeMillis() - start) + "\n");
 
+        // TASK 1
         start = System.currentTimeMillis();
 
         dataset = FeatureAggregator.doAggregated(dataset, new int[] {6}, ((groupIndexes, currentIndividual, dataset1) -> {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);
-                currentIndividual.add(lastIndividual.get(lastIndividual.size() - 1) + currentIndividual.get(4));
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
+                currentIndividual.add(sum / groupIndexes.size());
             }
             else {
                 currentIndividual.add(currentIndividual.get(4));
@@ -126,7 +128,63 @@ public class Main {
 
         System.out.println("Time elapsed on task 1: " + (System.currentTimeMillis() - start) + "\n");
 
+        // TASK 2
+        start = System.currentTimeMillis();
 
+        dataset = FeatureAggregator.doAggregated(dataset, new int[] {5}, ((groupIndexes, currentIndividual, dataset1) -> {
+            if (groupIndexes.size() >= 1) {
+                Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
+                List<Float> lastIndividual = dataset1.get(lastIndex);
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
+                currentIndividual.add(sum / groupIndexes.size());
+            }
+            else {
+                currentIndividual.add(currentIndividual.get(4));
+            }
+            return currentIndividual;
+        }));
+
+        System.out.println("Time elapsed on task 2: " + (System.currentTimeMillis() - start) + "\n");
+
+        // TASK 3
+        start = System.currentTimeMillis();
+
+        dataset = FeatureAggregator.doAggregated(dataset, new int[] {6, 1, 2}, ((groupIndexes, currentIndividual, dataset1) -> {
+            if (groupIndexes.size() >= 1) {
+                Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
+                List<Float> lastIndividual = dataset1.get(lastIndex);
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
+                currentIndividual.add(sum / groupIndexes.size());
+            }
+            else {
+                currentIndividual.add(currentIndividual.get(4));
+            }
+            return currentIndividual;
+        }));
+
+        System.out.println("Time elapsed on task 3: " + (System.currentTimeMillis() - start) + "\n");
+
+        // TASK 4
+        start = System.currentTimeMillis();
+
+        dataset = FeatureAggregator.doAggregated(dataset, new int[] {6}, ((groupIndexes, currentIndividual, dataset1) -> {
+            if (groupIndexes.size() >= 1) {
+                Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
+                List<Float> lastIndividual = dataset1.get(lastIndex);
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 ) + currentIndividual.get(4);
+                if (groupIndexes.size() > 100) {
+                    List<Float> individual101 = dataset1.get(groupIndexes.get(groupIndexes.size() - 101));
+                    sum -= individual101.get(individual101.size() - 1) * groupIndexes.size() - 100;
+                }
+                currentIndividual.add(sum / groupIndexes.size() );
+            }
+            else {
+                currentIndividual.add(currentIndividual.get(4));
+            }
+            return currentIndividual;
+        }));
+
+        System.out.println("Time elapsed on task 4: " + (System.currentTimeMillis() - start) + "\n");
 
 
 
