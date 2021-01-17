@@ -39,3 +39,6 @@ java/build/**
 # Jupyter Lab
 .ipynb_checkpoints
 __pycache__
+
+# Output
+dataset_out.csv
