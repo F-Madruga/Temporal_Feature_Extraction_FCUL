@@ -117,8 +117,19 @@ public class Main {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);
-                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
-                currentIndividual.add(sum / groupIndexes.size());
+
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size())+ currentIndividual.get(4);
+                float mean = sum / (groupIndexes.size() + 1);
+                currentIndividual.add(mean);
+
+                if (lastIndividual.get(6) == 1) {
+                    System.out.println("LI " + lastIndividual.get(lastIndividual.size() - 1));
+                    System.out.println("Last sum ajusted " + (lastIndividual.get(lastIndividual.size() - 1) * (groupIndexes.size())));
+                    System.out.println("CI " + currentIndividual.get(4));
+                    System.out.println("Sum " + sum);
+                    System.out.println("Mean " + mean);
+                    System.out.println(groupIndexes.size());
+                }
             }
             else {
                 currentIndividual.add(currentIndividual.get(4));
@@ -135,8 +146,9 @@ public class Main {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);
-                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
-                currentIndividual.add(sum / groupIndexes.size());
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size())+ currentIndividual.get(4);
+                float mean = sum / (groupIndexes.size() + 1);
+                currentIndividual.add(mean);
             }
             else {
                 currentIndividual.add(currentIndividual.get(4));
@@ -153,8 +165,11 @@ public class Main {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);
-                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
-                currentIndividual.add(sum / groupIndexes.size());
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size())+ currentIndividual.get(4);
+                float mean = sum / (groupIndexes.size() + 1);
+                currentIndividual.add(mean);
+                //float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 )+ currentIndividual.get(4);
+                //currentIndividual.add(sum / groupIndexes.size());
             }
             else {
                 currentIndividual.add(currentIndividual.get(4));
@@ -164,19 +179,40 @@ public class Main {
 
         System.out.println("Time elapsed on task 3: " + (System.currentTimeMillis() - start) + "\n");
 
-        // TASK 4
+            // TASK 4
+            start = System.currentTimeMillis();
+
+            dataset = FeatureAggregator.doAggregated(dataset, new int[] {6}, ((groupIndexes, currentIndividual, dataset1) -> {
+                if (groupIndexes.size() >= 1) {
+                    Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
+                    List<Float> lastIndividual = dataset1.get(lastIndex);
+                    float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 ) + currentIndividual.get(4);
+                    if (groupIndexes.size() > 100) {
+                        List<Float> individual101 = dataset1.get(groupIndexes.get(groupIndexes.size() - 101));
+                        sum -= individual101.get(individual101.size() - 1) * groupIndexes.size() - 100;
+                    }
+                    currentIndividual.add(sum / groupIndexes.size() );
+                }
+                else {
+                    currentIndividual.add(currentIndividual.get(4));
+                }
+                return currentIndividual;
+            }));
+
+            System.out.println("Time elapsed on task 4: " + (System.currentTimeMillis() - start) + "\n");
+
+        // TASK 5
         start = System.currentTimeMillis();
 
         dataset = FeatureAggregator.doAggregated(dataset, new int[] {6}, ((groupIndexes, currentIndividual, dataset1) -> {
             if (groupIndexes.size() >= 1) {
                 Integer lastIndex = groupIndexes.get(groupIndexes.size() - 1);
                 List<Float> lastIndividual = dataset1.get(lastIndex);
-                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size() - 1 ) + currentIndividual.get(4);
-                if (groupIndexes.size() > 100) {
-                    List<Float> individual101 = dataset1.get(groupIndexes.get(groupIndexes.size() - 101));
-                    sum -= individual101.get(individual101.size() - 1) * groupIndexes.size() - 100;
-                }
-                currentIndividual.add(sum / groupIndexes.size() );
+
+                float sum = (lastIndividual.get(lastIndividual.size() - 1) * groupIndexes.size())+ currentIndividual.get(4);
+                float mean = sum / (groupIndexes.size() + 1);
+                currentIndividual.add(mean);
+
             }
             else {
                 currentIndividual.add(currentIndividual.get(4));
@@ -184,8 +220,7 @@ public class Main {
             return currentIndividual;
         }));
 
-        System.out.println("Time elapsed on task 4: " + (System.currentTimeMillis() - start) + "\n");
-
+        System.out.println("Time elapsed on task 5: " + (System.currentTimeMillis() - start) + "\n");
 
 
         start = System.currentTimeMillis();
