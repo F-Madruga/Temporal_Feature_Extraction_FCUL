@@ -143,7 +143,7 @@ public class Main {
 
                 float standartDeviation = (float) Math.sqrt(standardDeviationSum/(groupIndexes.size() + 1));
 
-                currentIndividual.add(currentIndividual.get(4) + (3 * standartDeviation));
+                currentIndividual.add(mean + (3 * standartDeviation));
 
             }
             else {
